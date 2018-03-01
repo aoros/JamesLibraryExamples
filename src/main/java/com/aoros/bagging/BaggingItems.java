@@ -10,6 +10,7 @@ public class BaggingItems {
 
     private final int numAvailableBags, maxBagCapacity;
     private final Map<String, Integer> nameToIDMap = new HashMap<>();
+	private final Map<Integer, String> _IDToNameMap = new HashMap<>();
     private final Set<Integer> IDs = new HashSet<>();
     private final int[] sizes;
     private final Map<Integer, Set<Integer>> inclusivityMap = new HashMap<>();
@@ -24,6 +25,7 @@ public class BaggingItems {
         int i = 0;
         for (GroceryItem item : groceryItems) {
             nameToIDMap.put(item.getItemName(), i);
+			_IDToNameMap.put(i, item.getItemName());
             IDs.add(i);
             sizes[i] = item.getSize();
             i++;
@@ -86,4 +88,9 @@ public class BaggingItems {
     public Set<Integer>[] getInclusivitySets() {
         return inclusivitySets;
     }
+
+	public String getIDToNameMap(int id)
+	{
+		return _IDToNameMap.get(id);
+	}
 }
