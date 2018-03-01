@@ -8,7 +8,7 @@ import java.io.FileNotFoundException;
 public class Bagging
 {
 	private static String filePath = "src/main/resources/test4";
-	private static int timeLimitInSecs = 10;
+	private static int timeLimitInSecs = 1;
 	private static final boolean VERBOSE = true;
 
 	/**
