@@ -1,6 +1,7 @@
 package com.aoros.bagging;
 
 import java.io.FileNotFoundException;
+import java.util.Set;
 
 /**
  * Main class for the bagging problem.
@@ -50,15 +51,21 @@ public class Bagging
 			for (int k = 0; k < 1000; k++)
 			{
 				BaggingSolution randomBaggingSolution = data.createRandomSolution();
+				for (Set<Integer> bagOfItems : randomBaggingSolution.getBagsOfItems()) {
+					System.out.println(bagOfItems);
+				}
 				BaggingLocalSearch search = new BaggingLocalSearch(randomBaggingSolution, timeLimitInSecs);
 				BaggingSolution solution = search.performSearch();
-				if (solution.getSolutionScore() == 0)
-				{
-					System.out.println("success");
-					break;
+
+				System.out.println("iter: " + k
+								   + "   random solution score: " + randomBaggingSolution.getSolutionScore()
+								   + "   solution score: " + solution.getSolutionScore());
+				for (Set<Integer> bagOfItems : solution.getBagsOfItems()) {
+					System.out.println(bagOfItems);
 				}
+				if (solution.getSolutionScore() == 0)
+					break;
 			}
-			System.out.println("failed");
 
 //			data.createRandomSolutions(2000);
 //			data.printOutBaggingDataSolutionScores();

@@ -28,21 +28,20 @@ public class BaggingData implements IntegerIdentifiedData
 		BaggingSolution solution = new BaggingSolution(items);
 		for (Integer itemId : items.getItemIds())
 		{
-			int itemSize = items.getSizes()[itemId];
 			boolean done = false;
 			while (!done)
 			{
 				int bagNumber = r.nextInt(items.getNumAvailableBags());
-				if (solution.willItemFitInBag(bagNumber, itemSize))
-				{
-					solution.addItemToBag(bagNumber, itemId, itemSize);
-					done = true;
-				}
+//				if (solution.willItemFitInBag(bagNumber, itemSize))
+//				{
+				solution.addItemToBag(bagNumber, itemId);
+				done = true;
+//				}
 			}
 		}
 		return solution;
 	}
-	
+
 	public void createRandomSolutions(int numToCreate)
 	{
 		for (int i = 0; i < numToCreate; i++)

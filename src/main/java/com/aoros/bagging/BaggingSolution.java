@@ -1,6 +1,5 @@
 package com.aoros.bagging;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -14,7 +13,9 @@ public class BaggingSolution
 	private final int[] bagSizes;
 	private final Map<Integer, Set<Integer>> inclusivityMap;
 	private final int[] inclusivityBagViolationScores;
+	private final int[] bagSizeViolationScores;
 	private final BaggingItems items;
+	private int violationScore = 0;
 
 	public BaggingSolution(BaggingItems items)
 	{
@@ -28,17 +29,30 @@ public class BaggingSolution
 		bagSizes = new int[items.getNumAvailableBags()];
 		inclusivityMap = items.getInclusivityMap();
 		inclusivityBagViolationScores = new int[items.getNumAvailableBags()];
+		bagSizeViolationScores = new int[items.getNumAvailableBags()];
 	}
 
 	public BaggingSolution(BaggingSolution solution)
 	{
 		this.items = solution.items;
 		this.maxBagSize = solution.maxBagSize;
-		this.bagsOfItems = solution.bagsOfItems;
-		this.bagSizes = solution.bagSizes;
-		this.inclusivityMap = new HashMap<>();
-		this.inclusivityMap.putAll(solution.inclusivityMap);
-		this.inclusivityBagViolationScores = solution.inclusivityBagViolationScores;
+		this.bagsOfItems = new Set[solution.items.getNumAvailableBags()];
+		this.bagSizes = new int[solution.bagSizes.length];
+		System.arraycopy(solution.bagSizes, 0, this.bagSizes, 0, solution.bagSizes.length);
+		this.inclusivityMap = solution.inclusivityMap;
+		this.inclusivityBagViolationScores = new int[solution.inclusivityBagViolationScores.length];
+		System.arraycopy(solution.inclusivityBagViolationScores, 0, this.inclusivityBagViolationScores, 0, solution.inclusivityBagViolationScores.length);
+		this.bagSizeViolationScores = new int[solution.bagSizeViolationScores.length];
+		System.arraycopy(solution.bagSizeViolationScores, 0, this.bagSizeViolationScores, 0, solution.bagSizeViolationScores.length);
+		for (int i = 0; i < bagsOfItems.length; i++)
+		{
+			bagsOfItems[i] = new HashSet<>();
+			for (Integer item : solution.bagsOfItems[i])
+			{
+				bagsOfItems[i].add((int) item);
+			}
+		}
+		calculateSolutionScore();
 	}
 
 	public BaggingItems getItems()
@@ -51,11 +65,23 @@ public class BaggingSolution
 		return bagSizes[bagNumber] + itemSize <= maxBagSize;
 	}
 
-	public void addItemToBag(int bagNumber, Integer itemId, Integer itemSize)
+	public void addItemToBag(int bagNumber, Integer itemId)
 	{
+		int itemSize = items.getSizes()[itemId];
 		bagsOfItems[bagNumber].add(itemId);
 		bagSizes[bagNumber] += itemSize;
-		addToInclusivityViolations(bagNumber, itemId);
+		calcInclusivityViolations(bagNumber, itemId);
+		calcBagSizeViolations(bagNumber, itemId);
+		calculateSolutionScore();
+	}
+	
+	public void removeItemFromBag(int bagNumber, Integer itemId) {
+		int itemSize = items.getSizes()[itemId];
+		bagsOfItems[bagNumber].remove(itemId);
+		bagSizes[bagNumber] -= itemSize;
+		calcInclusivityViolations(bagNumber, itemId);
+		calcBagSizeViolations(bagNumber, itemId);
+		calculateSolutionScore();
 	}
 
 	public Set<Integer>[] getBagsOfItems()
@@ -70,13 +96,10 @@ public class BaggingSolution
 
 	public int getSolutionScore()
 	{
-		int solutionScore = 0;
-		for (int i = 0; i < inclusivityBagViolationScores.length; i++)
-			solutionScore += inclusivityBagViolationScores[i];
-		return solutionScore;
+		return violationScore;
 	}
 
-	private void addToInclusivityViolations(int bagNumber, Integer itemId)
+	private void calcInclusivityViolations(int bagNumber, Integer itemId)
 	{
 		int score = 0;
 		for (Iterator<Integer> it = bagsOfItems[bagNumber].iterator(); it.hasNext();)
@@ -94,9 +117,22 @@ public class BaggingSolution
 		inclusivityBagViolationScores[bagNumber] = score;
 	}
 
+	private void calcBagSizeViolations(int bagNumber, Integer itemId)
+	{
+		int score = maxBagSize - bagSizes[bagNumber];
+		bagSizeViolationScores[bagNumber] = score >= 0 ? 0 : score;
+	}
+
 	@Override
 	public String toString()
 	{
 		return "BaggingSolution{" + "maxBagSize=" + maxBagSize + ", bagsOfItems=" + bagsOfItems + ", bagSizes=" + bagSizes + ", inclusivityMap=" + inclusivityMap + ", inclusivityBagViolationScores=" + inclusivityBagViolationScores + '}';
+	}
+
+	private void calculateSolutionScore()
+	{
+		violationScore = 0;
+		for (int i = 0; i < inclusivityBagViolationScores.length; i++)
+			violationScore += inclusivityBagViolationScores[i] + bagSizeViolationScores[i];
 	}
 }
