@@ -1,7 +1,7 @@
 3                   //number of bags available
 7                   //maximum bag size is 7
-bread  4 + rolls    //1st item size
-rolls  2 + bread    //1st item size
-squash 3 - meat     //2nd item size
-meat   5            //3rd item size
-lima_beans 1 - meat //5th item size
+bread  4 + rolls    //1st item size index of 0
+rolls  2 + bread    //1st item size index of 1
+squash 3 - meat     //2nd item size index of 2
+meat   5            //3rd item size index of 3
+lima_beans 1 - meat //5th item size index of 4
