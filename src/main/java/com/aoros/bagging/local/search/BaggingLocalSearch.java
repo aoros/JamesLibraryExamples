@@ -1,4 +1,4 @@
-package com.aoros.bagging;
+package com.aoros.bagging.local.search;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,16 +10,20 @@ public class BaggingLocalSearch {
     private BaggingSolution solution;
     private final int timeLimitInSecs;
     private final Random r = new Random();
+    private final boolean verbose;
 
-    public BaggingLocalSearch(BaggingSolution startingSolution, int timeLimitInSecs) {
+    public BaggingLocalSearch(BaggingSolution startingSolution, int timeLimitInSecs, boolean verbose) {
         this.solution = startingSolution;
         this.timeLimitInSecs = timeLimitInSecs;
+        this.verbose = verbose;
     }
 
     public BaggingSolution performSearch() {
         long startTimer = System.currentTimeMillis();
         while (true) {
-            Bagging.printBagOfItems(solution);
+            if (verbose)
+                Bagging.printBagOfItems(solution);
+
             if (solution.getSolutionScore() == 0)
                 break;
 

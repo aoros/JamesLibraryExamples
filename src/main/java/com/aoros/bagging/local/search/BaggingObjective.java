@@ -1,4 +1,4 @@
-package com.aoros.bagging;
+package com.aoros.bagging.local.search;
 
 import java.util.Map;
 import org.jamesframework.core.exceptions.IncompatibleDeltaEvaluationException;

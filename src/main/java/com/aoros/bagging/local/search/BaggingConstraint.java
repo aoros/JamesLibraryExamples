@@ -1,4 +1,4 @@
-package com.aoros.bagging;
+package com.aoros.bagging.local.search;
 
 import org.jamesframework.core.exceptions.IncompatibleDeltaEvaluationException;
 import org.jamesframework.core.problems.constraints.Constraint;

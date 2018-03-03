@@ -1,4 +1,4 @@
-package com.aoros.bagging;
+package com.aoros.bagging.local.search;
 
 import java.io.FileNotFoundException;
 import java.util.Set;
@@ -8,9 +8,9 @@ import java.util.Set;
  */
 public class Bagging {
 
-    private static String filePath = "src/main/resources/test1";
-    private static int timeLimitInSecs = 1;
-    private static final boolean VERBOSE = true;
+    private static String filePath = "src/main/resources/test4";
+    private static int timeLimitInSecs = 30;
+    private static final boolean VERBOSE = false;
 
     /**
      * Runs the bagging problem. Expects two parameters: (1) the input file
@@ -44,17 +44,22 @@ public class Bagging {
             BaggingData data = new BaggingData(items);
             printMsg("Creating random solutions...", VERBOSE);
 
-            for (int k = 0; k < 1000; k++) {
+            boolean solutionFound = false;
+            for (int k = 0; k < 10; k++) {
+                System.out.println("=== Start of ITERATION: " + k + " ===");
                 BaggingSolution randomBaggingSolution = data.createRandomSolution();
-                BaggingLocalSearch search = new BaggingLocalSearch(randomBaggingSolution, timeLimitInSecs);
+                BaggingLocalSearch search = new BaggingLocalSearch(randomBaggingSolution, timeLimitInSecs, VERBOSE);
                 BaggingSolution solution = search.performSearch();
 
-                if (solution.getSolutionScore() == 0)
+                if (solution.getSolutionScore() == 0) {
+                    printBagOfItems(solution);
+                    solutionFound = true;
                     break;
+                }
+                System.out.println("=== End of ITERATION: " + k + " ===");
             }
-
-//			data.createRandomSolutions(2000);
-//			data.printOutBaggingDataSolutionScores();
+            if (!solutionFound)
+                System.out.println("No Solution Found");
         } catch (FileNotFoundException ex) {
             System.err.println("Failed to read file: " + filePath);
             System.exit(2);
